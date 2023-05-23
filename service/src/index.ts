@@ -66,21 +66,45 @@ router.post('/session', async (req, res) => {
   }
 })
 
+const fetch = require('node-fetch');
+
 router.post('/verify', async (req, res) => {
   try {
     const { token } = req.body as { token: string }
     if (!token)
-      throw new Error('Secret key is empty')
+      throw new Error('密钥为空 | Secret key is empty')
 
-    if (process.env.AUTH_SECRET_KEY !== token)
-      throw new Error('密钥无效 | Secret key is invalid')
+    // Validate token with API
+    const response = await fetch(`http://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
+    if (response.status !== 200)
+      throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`);
+    
+    const data = await response.json();
+    if (!data.success || !data.data || data.data.licenseKey !== token) {
+      throw new Error('密钥无效 | Secret key is invalid');
+    }
 
-    res.send({ status: 'Success', message: 'Verify successfully', data: null })
+    res.send({ status: 'Success', message: '验证成功 | Verify successfully', data: null })
   }
   catch (error) {
     res.send({ status: 'Fail', message: error.message, data: null })
   }
 })
+// router.post('/verify', async (req, res) => {
+//   try {
+//     const { token } = req.body as { token: string }
+//     if (!token)
+//       throw new Error('Secret key is empty')
+
+//     if (process.env.AUTH_SECRET_KEY !== token)
+//       throw new Error('密钥无效 | Secret key is invalid')
+
+//     res.send({ status: 'Success', message: 'Verify successfully', data: null })
+//   }
+//   catch (error) {
+//     res.send({ status: 'Fail', message: error.message, data: null })
+//   }
+// })
 
 app.use('', router)
 app.use('/api', router)
