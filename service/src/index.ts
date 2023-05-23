@@ -1,3 +1,4 @@
+import fetch from 'node-fetch'
 import express from 'express'
 import type { RequestProps } from './types'
 import type { ChatMessage } from './chatgpt'
@@ -5,6 +6,7 @@ import { chatConfig, chatReplyProcess, currentModel } from './chatgpt'
 import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
+
 
 const app = express()
 const router = express.Router()
@@ -66,7 +68,6 @@ router.post('/session', async (req, res) => {
   }
 })
 
-const fetch = require('node-fetch');
 
 router.post('/verify', async (req, res) => {
   try {
