@@ -7,7 +7,6 @@ import { auth } from './middleware/auth'
 import { limiter } from './middleware/limiter'
 import { isNotEmptyString } from './utils/is'
 
-
 const app = express()
 const router = express.Router()
 
@@ -68,6 +67,13 @@ router.post('/session', async (req, res) => {
   }
 })
 
+// 将用户名和密码编码为Base64字符串
+const auth = Buffer.from('ck_19465cb4cb67a9649058b60d7e78168059bcd818:cs_f20060b646e2ce1dc395d60290bb2a874cd6993b').toString('base64');
+// 添加Basic Auth认证信息
+const headers = {
+  'Authorization': `Basic ${auth}`
+}
+
 
 router.post('/verify', async (req, res) => {
   try {
@@ -75,8 +81,9 @@ router.post('/verify', async (req, res) => {
     if (!token)
       throw new Error('密钥为空 | Secret key is empty')
 
+
     // Validate token with API
-    const response = await fetch(`http://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
+    const response = await fetch(`http://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
     if (response.status !== 200)
       throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`);
     
@@ -91,6 +98,7 @@ router.post('/verify', async (req, res) => {
     res.send({ status: 'Fail', message: error.message, data: null })
   }
 })
+
 // router.post('/verify', async (req, res) => {
 //   try {
 //     const { token } = req.body as { token: string }
