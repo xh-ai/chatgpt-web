@@ -60,9 +60,10 @@ function handlePress(event: KeyboardEvent) {
             403
           </h2>
           <p class="text-base text-center text-slate-500 dark:text-slate-500">
-            {{ $t('common.unauthorizedTips') }}
+            {{ $t('common.unauthorizedTips') }}<br/>
+            输入授权码视为同意本站服务:<a href="https://ai4all.me/%e5%85%8d%e8%b4%a3%e5%a3%b0%e6%98%8e/">免责声明</a>
           </p>
-          <Icon403 class="w-[200px] m-auto" />
+          <Icon403 class="w-[200px] m-auto" />          
         </header>
         <NInput v-model:value="token" type="password" placeholder="" @keypress="handlePress" />
         <NButton
