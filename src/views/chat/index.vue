@@ -30,7 +30,7 @@ const { isMobile } = useBasicLayout()
 const { addChat, updateChat, updateChatSome, getChatByUuidAndIndex } = useChat()
 const { scrollRef, scrollToBottom, scrollToBottomIfAtBottom } = useScroll()
 const { usingContext, toggleUsingContext } = useUsingContext()
-usingContext.value = true  // 总是使用上下文
+
 const { uuid } = route.params as { uuid: string }
 
 const dataSources = computed(() => chatStore.getChatByUuid(+uuid))
@@ -85,7 +85,7 @@ async function onConversation() {
 
   let options: Chat.ConversationRequest = {}
   const lastContext = conversationList.value[conversationList.value.length - 1]?.conversationOptions
-
+  usingContext.value = true
   if (lastContext && usingContext.value)
     options = { ...lastContext }
 
