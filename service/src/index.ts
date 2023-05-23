@@ -83,7 +83,7 @@ router.post('/verify', async (req, res) => {
 
 
     // Validate token with API
-    const response = await fetch(`http://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
+    const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
     if (response.status !== 200)
       throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`);
     
