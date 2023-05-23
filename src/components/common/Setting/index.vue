@@ -4,7 +4,7 @@ import { NModal, NTabPane, NTabs } from 'naive-ui'
 import General from './General.vue'
 // import Advanced from './Advanced.vue'
 // import About from './About.vue'
-import { useAuthStore } from '@/store'
+// import { useAuthStore } from '@/store'
 import { SvgIcon } from '@/components/common'
 
 interface Props {
@@ -19,7 +19,7 @@ const props = defineProps<Props>()
 
 const emit = defineEmits<Emit>()
 
-const authStore = useAuthStore()
+// const authStore = useAuthStore()
 
 // const isChatGPTAPI = computed<boolean>(() => !!authStore.isChatGPTAPI)
 
