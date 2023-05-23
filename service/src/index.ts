@@ -68,10 +68,10 @@ router.post('/session', async (req, res) => {
 })
 
 // 将用户名和密码编码为Base64字符串
-const auth = Buffer.from('ck_19465cb4cb67a9649058b60d7e78168059bcd818:cs_f20060b646e2ce1dc395d60290bb2a874cd6993b').toString('base64');
+const auth_code = Buffer.from('ck_19465cb4cb67a9649058b60d7e78168059bcd818:cs_f20060b646e2ce1dc395d60290bb2a874cd6993b').toString('base64');
 // 添加Basic Auth认证信息
 const headers = {
-  'Authorization': `Basic ${auth}`
+  'Authorization': `Basic ${auth_code}`
 }
 
 
