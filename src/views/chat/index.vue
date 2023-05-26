@@ -133,7 +133,7 @@ async function onConversation() {
                 requestOptions: { prompt: message, options: { ...options } },
               },
             )
-            if (dataSources.value.length % 20 === 0) {
+            if (dataSources.value.length % 20 === 0 && dataSources.value.length > 10) {
               addChat(
                 +uuid,
                 {
@@ -148,6 +148,7 @@ async function onConversation() {
               
               options.parentMessageId = data.id
               lastText = data.text
+              message = '总结之前的全部聊天内容'
 
               return fetchChatAPIOnce()
             }
