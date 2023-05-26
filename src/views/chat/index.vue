@@ -58,7 +58,7 @@ function handleSubmit() {
 
 async function onConversation() {
   let message = prompt.value
-
+``
   if (loading.value)
     return
 
@@ -133,6 +133,24 @@ async function onConversation() {
                 requestOptions: { prompt: message, options: { ...options } },
               },
             )
+            if (dataSources.value.length % 20 === 0) {
+              addChat(
+                +uuid,
+                {
+                  dateTime: new Date().toLocaleString(),
+                  text: '总结之前的全部聊天内容',
+                  inversion: false,
+                  error: false,
+                  conversationOptions: null,
+                  requestOptions: { prompt: message, options: { ...options } },
+                },
+              )
+              
+              options.parentMessageId = data.id
+              lastText = data.text
+
+              return fetchChatAPIOnce()
+            }
 
             if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
               options.parentMessageId = data.id
@@ -150,8 +168,6 @@ async function onConversation() {
       })
       updateChatSome(+uuid, dataSources.value.length - 1, { loading: false })
     }
-
-    await fetchChatAPIOnce()
   }
   catch (error: any) {
     const errorMessage = error?.message ?? t('common.wrong')
