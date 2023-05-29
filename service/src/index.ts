@@ -91,7 +91,7 @@ router.post('/verify', async (req, res) => {
     if (!data.success || !data.data ) {
       if(data.data.licenseKey !== token)
         throw new Error('密钥无效 | Secret key is invalid');
-      if(data.data.timesActivated < 1)  
+      if(data.data.timesActivated === 0)  
         {const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/activate/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});}
       else{
         // TODO：
