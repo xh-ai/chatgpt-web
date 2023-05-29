@@ -89,7 +89,7 @@ router.post('/verify', async (req, res) => {
     }else{
       const data = await response.json();
 
-      if(data.data.timesActivated === 0)  
+      if(data.data.timesActivated === 0 || !data.data.timesActivated)  
         {const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/activate/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});}
       else{
         // TODO：
