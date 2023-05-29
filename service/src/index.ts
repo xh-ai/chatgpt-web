@@ -95,7 +95,7 @@ router.post('/verify', async (req, res) => {
         // TODO：
         // validFor + updatedAt < today
         // throw error: 密钥过期
-        const updatedAt = data.data.updatedAt;
+        const updatedAt = new Date(data.data.updatedAt);
         const today = new Date();
         const days = data.data.validFor;
         const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000));
