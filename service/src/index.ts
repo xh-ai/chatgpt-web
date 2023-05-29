@@ -84,13 +84,11 @@ router.post('/verify', async (req, res) => {
 
     // Validate token with API
     const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
-    if (response.status !== 200)
+    if (response.status !== 200){
       throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`);
-    
-    const data = await response.json();
-    if (!data.success || !data.data ) {
-      if(data.data.licenseKey !== token)
-        throw new Error('密钥无效 | Secret key is invalid');
+    }else{
+      const data = await response.json();
+
       if(data.data.timesActivated === 0)  
         {const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/activate/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});}
       else{
@@ -105,7 +103,13 @@ router.post('/verify', async (req, res) => {
           throw new Error('密钥过期 | "Expired key');
         }
       }
+
+      if (!data.success || !data.data || data.data.licenseKey !== token ) {
+        throw new Error('密钥无效 | Secret key is invalid');
+      }
     }
+    
+
 
     
     res.send({ status: 'Success', message: '验证成功 | Verify successfully', data: null })
