@@ -88,10 +88,26 @@ router.post('/verify', async (req, res) => {
       throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`);
     
     const data = await response.json();
-    if (!data.success || !data.data || data.data.licenseKey !== token) {
-      throw new Error('密钥无效 | Secret key is invalid');
+    if (!data.success || !data.data ) {
+      if(data.data.licenseKey !== token)
+        throw new Error('密钥无效 | Secret key is invalid');
+      if(data.data.timesActivated < 1)  
+        {const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/activate/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});}
+      else{
+        // TODO：
+        // validFor + updatedAt < today
+        // throw error: 密钥过期
+        const updatedAt = data.data.updatedAt;
+        const today = new Date();
+        const days = data.data.validFor;
+        const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000));
+        if (updatedAtPlusDays > today) {
+          throw new Error('密钥过期 | "Expired key');
+        }
+      }
     }
 
+    
     res.send({ status: 'Success', message: '验证成功 | Verify successfully', data: null })
   }
   catch (error) {
