@@ -99,7 +99,7 @@ router.post('/verify', async (req, res) => {
         const today = new Date();
         const days = data.data.validFor;
         const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000));
-        if (updatedAtPlusDays > today) {
+        if (updatedAtPlusDays < today) {
           throw new Error('密钥过期 | "Expired key');
         }
       }
