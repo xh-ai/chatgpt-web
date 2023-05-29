@@ -133,6 +133,8 @@ async function onConversation() {
                 requestOptions: { prompt: message, options: { ...options } },
               },
             )
+            
+            //TODO: message 超长度后， message=‘’ 清空历史
 
             if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
               options.parentMessageId = data.id

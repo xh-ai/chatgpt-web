@@ -93,8 +93,8 @@ router.post('/verify', async (req, res) => {
         {const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/activate/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});}
       else{
         // TODO：
-        // validFor + updatedAt < today
-        // throw error: 密钥过期
+        // 这里应该用rails 做个api服务
+        // 判断授权码是否激活
         const updatedAt = new Date(data.data.updatedAt);
         const today = new Date();
         const days = data.data.validFor;
