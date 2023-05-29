@@ -92,6 +92,9 @@ router.post('/verify', async (req, res) => {
       throw new Error('密钥无效 | Secret key is invalid');
     }
 
+    // 将token保存到当前用户的会话(session)中
+    req.session.auth_secret_key = token;
+
     res.send({ status: 'Success', message: '验证成功 | Verify successfully', data: null })
   }
   catch (error) {

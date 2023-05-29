@@ -133,25 +133,25 @@ async function onConversation() {
                 requestOptions: { prompt: message, options: { ...options } },
               },
             )
-            if (dataSources.value.length % 20 === 0 && dataSources.value.length > 10) {
-              addChat(
-                +uuid,
-                {
-                  dateTime: new Date().toLocaleString(),
-                  text: '总结之前的全部聊天内容',
-                  inversion: false,
-                  error: false,
-                  conversationOptions: null,
-                  requestOptions: { prompt: message, options: { ...options } },
-                },
-              )
+            // if (dataSources.value.length % 20 === 0 && dataSources.value.length > 10) {
+            //   addChat(
+            //     +uuid,
+            //     {
+            //       dateTime: new Date().toLocaleString(),
+            //       text: '总结之前的全部聊天内容',
+            //       inversion: false,
+            //       error: false,
+            //       conversationOptions: null,
+            //       requestOptions: { prompt: message, options: { ...options } },
+            //     },
+            //   )
               
-              options.parentMessageId = data.id
-              lastText = data.text
-              message = '总结之前的全部聊天内容'
+            //   options.parentMessageId = data.id
+            //   lastText = data.text
+            //   message = '总结之前的全部聊天内容'
 
-              return fetchChatAPIOnce()
-            }
+            //   return fetchChatAPIOnce()
+            // }
 
             if (openLongReply && data.detail.choices[0].finish_reason === 'length') {
               options.parentMessageId = data.id
