@@ -1,5 +1,4 @@
 import { isNotEmptyString } from '../utils/is'
-import { useAuthStoreWithout } from '@/store/modules/auth'
 import fetch from 'node-fetch'
 
 const auth = async (req, res, next) => {
@@ -10,9 +9,9 @@ const auth = async (req, res, next) => {
     try {
       
       const Authorization = req.header('Authorization')
-      const authStore = useAuthStoreWithout()
+      const token  = Authorization.replace('Bearer ', '').trim()
       if (isNotEmptyString(chat_lm_uri)){
-        const response = await fetch(`${chat_lm_uri}/${authStore.token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
+        const response = await fetch(`${chat_lm_uri}/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
         if (response.status !== 200) {
           throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`)
         }
@@ -24,12 +23,11 @@ const auth = async (req, res, next) => {
           const days = data.data.validFor
           const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000))
           if (updatedAtPlusDays < today)
-            authStore.removeToken()
             throw new Error('密钥过期 | "Expired key')
         }      
       }
 
-      if (!Authorization || Authorization.replace('Bearer ', '').trim() !== authStore.token.trim())
+      if (!Authorization)// || Authorization.replace('Bearer ', '').trim() !== authStore.token.trim())
         throw new Error('Error: 无访问权限 | No access rights')
         // todo 判断可用次数
       next()
