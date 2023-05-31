@@ -106,7 +106,7 @@ router.post('/verify', async (req, res) => {
       // 第一次访问设置过期时间
       if (data.data.timesActivated < 1) {
         const expires_at = new Date(createdAt.getTime() + (days * 24 * 60 * 60 * 1000))
-        const mydata = { expires_at, validFor: 0 }
+        const mydata = { expires_at, validFor: null }
 
         const response = await fetch(`${chat_lm_uri}/${token}`, {
           method: 'PUT',
