@@ -24,12 +24,10 @@ const auth = async (req, res, next) => {
         }
         else {
 
-          const updatedAt = new Date(data.data.updatedAt)
+          const expires_at = data.data.expires_at
           const today = new Date()
-          const days = data.data.validFor
-          const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000))
-          if (updatedAtPlusDays < today)
-            throw new Error('密钥过期，请申请新的授权码 | "Expired key')
+          if (expires_at < today)
+            throw new Error('密钥过期 | "Expired key')
         }      
       }
 
