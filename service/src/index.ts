@@ -104,7 +104,7 @@ router.post('/verify', async (req, res) => {
       const days = data.data.validFor
 
       // 第一次访问设置过期时间
-      if (data.data.timesActivated < 1) {
+      if (data.data.timesActivated < 2) {
         const expires_at = new Date(createdAt.getTime() + (days * 24 * 60 * 60 * 1000))
         const year = expires_at.getFullYear()
         const month = String(expires_at.getMonth() + 1).padStart(2, '0')
