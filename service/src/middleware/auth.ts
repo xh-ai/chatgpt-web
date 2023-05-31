@@ -17,7 +17,7 @@ const auth = async (req, res, next) => {
       const Authorization = req.header('Authorization')
       const token  = Authorization.replace('Bearer ', '').trim()
       if (isNotEmptyString(chat_lm_uri)){
-        const response = await fetch(`${chat_lm_uri}/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
+        const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
         if (response.status !== 200) {
           throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`)
         }
@@ -29,7 +29,10 @@ const auth = async (req, res, next) => {
           const days = data.data.validFor
           const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000))
           if (updatedAtPlusDays < today)
-            throw new Error('密钥过期 | "Expired key')
+            throw new Error('密钥过期，请申请新的授权码 | "Expired key')
+          
+          if (data.data.timesActivated > data.data.timesActivatedMax)
+            throw new Error('可用token为0，请申请新的授权码 | "usage: 0 tokens ')
         }      
       }
 
