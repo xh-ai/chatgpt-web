@@ -112,6 +112,9 @@ router.post('/verify', async (req, res) => {
         const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000))
         if (updatedAtPlusDays < today)
           throw new Error('密钥过期 | "Expired key')
+
+        if (data.data.timesActivated > data.data.timesActivatedMax)
+          throw new Error('可用token为0，请申请新的授权码 | "usage: 0 tokens ')
       }
 
       if (!data.success || !data.data || data.data.licenseKey !== token)
