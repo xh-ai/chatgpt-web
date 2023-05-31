@@ -68,12 +68,11 @@ router.post('/session', async (req, res) => {
 })
 
 // 将用户名和密码编码为Base64字符串
-const auth_code = Buffer.from('ck_19465cb4cb67a9649058b60d7e78168059bcd818:cs_f20060b646e2ce1dc395d60290bb2a874cd6993b').toString('base64');
+const auth_code = Buffer.from('ck_19465cb4cb67a9649058b60d7e78168059bcd818:cs_f20060b646e2ce1dc395d60290bb2a874cd6993b').toString('base64')
 // 添加Basic Auth认证信息
 const headers = {
-  'Authorization': `Basic ${auth_code}`
+  Authorization: `Basic ${auth_code}`,
 }
-
 
 router.post('/verify', async (req, res) => {
   try {
@@ -81,37 +80,44 @@ router.post('/verify', async (req, res) => {
     if (!token)
       throw new Error('密钥为空 | Secret key is empty')
 
-
     // Validate token with API
-    const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});
-    if (response.status !== 200){
-      throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`);
-    }else{
-      const data = await response.json();
+    // 读取环境变量 licenses manager CHAT_LM_URI
+    const chat_lm_uri = process.env.CHAT_LM_URI || ''
 
-      if(data.data.timesActivated === 0 || !data.data.timesActivated)  
-        {const response = await fetch(`https://ai4all.me/wp-json/lmfwc/v2/licenses/activate/${token}`, { headers }).catch(err => { throw new Error(`网络错误 | Network error: ${err.message}`)});}
-      else{
+    if (!isNotEmptyString(chat_lm_uri)) {
+      if (process.env.AUTH_SECRET_KEY !== token)
+        throw new Error('密钥无效 | Secret key is invalid')
+
+      res.send({ status: 'Success', message: 'Verify successfully', data: null })
+    }
+
+    // ‘http://ai4all.me/wp-json/lmfwc/v2/licenses/’
+    const response = await fetch(`${chat_lm_uri}/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
+    if (response.status !== 200) {
+      throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`)
+    }
+    else {
+      const data = await response.json()
+
+      if (data.data.timesActivated === 0 || !data.data.timesActivated) {
+        const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
+      }
+      else {
         // TODO：
         // 这里应该用rails 做个api服务
         // 判断授权码是否激活
-        const updatedAt = new Date(data.data.updatedAt);
-        const today = new Date();
-        const days = data.data.validFor;
-        const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000));
-        if (updatedAtPlusDays < today) {
-          throw new Error('密钥过期 | "Expired key');
-        }
+        const updatedAt = new Date(data.data.updatedAt)
+        const today = new Date()
+        const days = data.data.validFor
+        const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000))
+        if (updatedAtPlusDays < today)
+          throw new Error('密钥过期 | "Expired key')
       }
 
-      if (!data.success || !data.data || data.data.licenseKey !== token ) {
-        throw new Error('密钥无效 | Secret key is invalid');
-      }
+      if (!data.success || !data.data || data.data.licenseKey !== token)
+        throw new Error('密钥无效 | Secret key is invalid')
     }
-    
 
-
-    
     res.send({ status: 'Success', message: '验证成功 | Verify successfully', data: null })
   }
   catch (error) {
