@@ -95,16 +95,31 @@ router.post('/verify', async (req, res) => {
     const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
     const data = await response.json()
     if (response.status !== 200) {
-      throw new Error(`请求许可证失败 | Failed to request license: ${data.message}`)
+      throw new Error(`请求许可证失败 | ${data.message}`)
     }
     else {
       // 判断授权码是否激活
-      const updatedAt = new Date(data.data.updatedAt)
+      const createdAt = new Date(data.data.createdAt)
       const today = new Date()
       const days = data.data.validFor
-      const updatedAtPlusDays = new Date(updatedAt.getTime() + (days * 24 * 60 * 60 * 1000))
 
-      if (updatedAtPlusDays < today)
+      // 第一次访问设置过期时间
+      if (data.data.timesActivated < 1) {
+        const expires_at = new Date(createdAt.getTime() + (days * 24 * 60 * 60 * 1000))
+        const mydata = { expires_at, validFor: 0 }
+
+        const response = await fetch(`${chat_lm_uri}/${token}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(mydata),
+        }).catch((err) => {
+          throw new Error(`网络错误 | Network error: ${err.message}`)
+        })
+      }
+
+      const expires_at = data.data.expires_at
+
+      if (expires_at < today)
         throw new Error('密钥过期 | "Expired key')
 
       if (!data.success || !data.data || data.data.licenseKey !== token)
