@@ -18,11 +18,11 @@ const auth = async (req, res, next) => {
       const token  = Authorization.replace('Bearer ', '').trim()
       if (isNotEmptyString(chat_lm_uri)){
         const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
+        const data = await response.json()
         if (response.status !== 200) {
-          throw new Error(`请求许可证失败 | Failed to request license: ${response.statusText}`)
+          throw new Error(`请求许可证失败 | ${data.data.message}`)
         }
         else {
-          const data = await response.json()
 
           const updatedAt = new Date(data.data.updatedAt)
           const today = new Date()
