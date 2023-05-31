@@ -110,7 +110,7 @@ router.post('/verify', async (req, res) => {
         const month = String(expires_at.getMonth() + 1).padStart(2, '0')
         const day = String(expires_at.getDate()).padStart(2, '0')
         const formatted_date = `${year}-${month}-${day}`
-        const mydata = { expires_at: formatted_date, validFor: null }
+        const mydata = { expires_at: formatted_date }
 
         const response = await fetch(`${chat_lm_uri}/${token}`, {
           method: 'PUT',
