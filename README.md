@@ -184,6 +184,15 @@ pnpm dev
 - `HTTPS_PROXY` 支持 `http`，`https`, `socks5`，可选
 - `ALL_PROXY` 支持 `http`，`https`, `socks5`，可选
 
+wordpress license manager:
+
+- `CHAT_LM_URI`  参考路径 `https://yourweb.site/wp-json/lmfwc/v2/licenses `
+
+		license manager 中： 只需要设置有效天数validFor和最大激活数
+		- 有效天数第一次访问时候会set null， 然后过期时间自动更新
+		- 最大激活数就是访问次数控制
+
+
 ## 打包
 
 ### 使用 Docker
