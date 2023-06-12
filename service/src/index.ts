@@ -98,13 +98,13 @@ router.post('/verify', async (req, res) => {
       }
       else {
         // 判断授权码是否激活
-        const createdAt = new Date(data.data.createdAt)
+        // const createdAt = new Date(data.data.createdAt)
         const today = new Date()
         const days = data.data.validFor
 
         // 第一次访问设置过期时间
         if (data.data.timesActivated < 2) {
-          const expires_at = new Date(createdAt.getTime() + (days * 24 * 60 * 60 * 1000))
+          const expires_at = new Date(today.getTime() + (days * 24 * 60 * 60 * 1000))
           const year = expires_at.getFullYear()
           const month = String(expires_at.getMonth() + 1).padStart(2, '0')
           const day = String(expires_at.getDate()).padStart(2, '0')
