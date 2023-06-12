@@ -206,11 +206,8 @@ wordpress license manager:
 ```bash
 docker build -t chatgpt-web .
 
-# 前台运行
-docker run --name chatgpt-web --rm -it -p 127.0.0.1:3002:3002 --env OPENAI_API_KEY=your_api_key chatgpt-web
+docker run --name chatgpt-web3 -d -p 3003:3002 -e MAX_REQUEST_PER_HOUR=60 -e OPENAI_API_KEY=sk-keys -e AUTH_SECRET_KEY=2024 -e CHAT_LM_URI="https://ai4all.me/wp-json/lmfwc/v2/licenses" chatgpt-web
 
-# 后台运行
-docker run --name chatgpt-web -d -p 127.0.0.1:3002:3002 --env OPENAI_API_KEY=your_api_key chatgpt-web
 
 # 运行地址
 http://localhost:3002/
