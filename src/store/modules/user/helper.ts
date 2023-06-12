@@ -17,7 +17,7 @@ export function defaultSetting(): UserState {
     userInfo: {
       avatar: 'https://avatars.githubusercontent.com/u/56016372?v=4',
       name: '普通用户',
-      description: '欢迎使用AI助理',
+      description: '欢迎使用<a href="https://ai4all.me">AI助理</a>',
     },
   }
 }

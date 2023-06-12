@@ -85,49 +85,49 @@ router.post('/verify', async (req, res) => {
     const chat_lm_uri = process.env.CHAT_LM_URI || ''
 
     if (!isNotEmptyString(chat_lm_uri)) {
+      // 本地验证
       if (process.env.AUTH_SECRET_KEY !== token)
         throw new Error('密钥无效 | Secret key is invalid')
-
-      res.send({ status: 'Success', message: 'Verify successfully', data: null })
-    }
-
-    // ‘http://ai4all.me/wp-json/lmfwc/v2/licenses/’
-    const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
-    const data = await response.json()
-    if (response.status !== 200) {
-      throw new Error(`请求许可证失败 | ${data.message}`)
     }
     else {
-      // 判断授权码是否激活
-      const createdAt = new Date(data.data.createdAt)
-      const today = new Date()
-      const days = data.data.validFor
-
-      // 第一次访问设置过期时间
-      if (data.data.timesActivated < 2) {
-        const expires_at = new Date(createdAt.getTime() + (days * 24 * 60 * 60 * 1000))
-        const year = expires_at.getFullYear()
-        const month = String(expires_at.getMonth() + 1).padStart(2, '0')
-        const day = String(expires_at.getDate()).padStart(2, '0')
-        const formatted_date = `${year}-${month}-${day}`
-        const mydata = { expires_at: formatted_date }
-
-        const response = await fetch(`${chat_lm_uri}/${token}`, {
-          method: 'PUT',
-          headers,
-          body: JSON.stringify(mydata),
-        }).catch((err) => {
-          throw new Error(`网络错误 | Network error: ${err.message}`)
-        })
+      // ‘http://ai4all.me/wp-json/lmfwc/v2/licenses/’
+      const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
+      const data = await response.json()
+      if (response.status !== 200) {
+        throw new Error(`请求许可证失败 | ${data.message}`)
       }
+      else {
+        // 判断授权码是否激活
+        const createdAt = new Date(data.data.createdAt)
+        const today = new Date()
+        const days = data.data.validFor
 
-      const expires_at = data.data.expires_at
+        // 第一次访问设置过期时间
+        if (data.data.timesActivated < 2) {
+          const expires_at = new Date(createdAt.getTime() + (days * 24 * 60 * 60 * 1000))
+          const year = expires_at.getFullYear()
+          const month = String(expires_at.getMonth() + 1).padStart(2, '0')
+          const day = String(expires_at.getDate()).padStart(2, '0')
+          const formatted_date = `${year}-${month}-${day}`
+          const mydata = { expires_at: formatted_date }
 
-      if (expires_at < today)
-        throw new Error('密钥过期 | "Expired key')
+          const response = await fetch(`${chat_lm_uri}/${token}`, {
+            method: 'PUT',
+            headers,
+            body: JSON.stringify(mydata),
+          }).catch((err) => {
+            throw new Error(`网络错误 | Network error: ${err.message}`)
+          })
+        }
 
-      if (!data.success || !data.data || data.data.licenseKey !== token)
-        throw new Error('密钥无效 | Secret key is invalid')
+        const expires_at = data.data.expires_at
+
+        if (expires_at < today)
+          throw new Error('密钥过期 | "Expired key')
+
+        if (!data.success || !data.data || data.data.licenseKey !== token)
+          throw new Error('密钥无效 | Secret key is invalid')
+      }
     }
 
     res.send({ status: 'Success', message: '验证成功 | Verify successfully', data: null })

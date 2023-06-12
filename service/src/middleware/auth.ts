@@ -1,5 +1,5 @@
-import { isNotEmptyString } from '../utils/is'
 import fetch from 'node-fetch'
+import { isNotEmptyString } from '../utils/is'
 
 const auth = async (req, res, next) => {
   const AUTH_SECRET_KEY = process.env.AUTH_SECRET_KEY
@@ -13,27 +13,24 @@ const auth = async (req, res, next) => {
 
   if (isNotEmptyString(AUTH_SECRET_KEY)) {
     try {
-      
       const Authorization = req.header('Authorization')
-      const token  = Authorization.replace('Bearer ', '').trim()
-      if (isNotEmptyString(chat_lm_uri)){
+      const token = Authorization.replace('Bearer ', '').trim()
+      if (isNotEmptyString(chat_lm_uri)) {
         const response = await fetch(`${chat_lm_uri}/activate/${token}`, { headers }).catch((err) => { throw new Error(`网络错误 | Network error: ${err.message}`) })
         const data = await response.json()
         if (response.status !== 200) {
           throw new Error(`请求许可证失败 | ${data.message}`)
         }
         else {
-
           const expires_at = data.data.expires_at
           const today = new Date()
           if (expires_at < today)
             throw new Error('密钥过期 | "Expired key')
-        }      
+        }
       }
 
       if (!Authorization)// || Authorization.replace('Bearer ', '').trim() !== authStore.token.trim())
         throw new Error('Error: 无访问权限 | No access rights')
-        // todo 判断可用次数
       next()
     }
     catch (error) {
