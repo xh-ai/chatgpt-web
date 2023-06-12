@@ -126,7 +126,7 @@ router.post('/verify', async (req, res) => {
           throw new Error('密钥过期 | "Expired key')
 
         if (!data.success || !data.data || data.data.licenseKey !== token)
-          throw new Error('密钥无效 | Secret key is invalid')
+          throw new Error(`密钥无效 | Secret key is invalid ${token}, ${data.data.licenseKey}`)
       }
     }
 
